@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from catboost import CatBoostClassifier
+from catboost import CatBoostRegressor
 
 df = pd.read_csv('D:/Data Analysis/Space Mission Analysis/Dataset/Space_Missions_Dataset.csv')
 
@@ -31,17 +31,31 @@ df1['Launch_Year'] = pd.to_numeric(
     errors='coerce'
 )
 
+df1['Partner_Count'] = (
+    df1['Partner_Agencies']
+    .fillna('')
+    .str.split(',')
+    .apply(lambda x: len(x) if x != [''] else 0)
+)
+
 df1 = df1.drop(columns=['Partner_Agencies'])
 
-X = df1.drop('Status', axis=1)
-y = df1['Status']
+df1['Partner_Count'] = pd.to_numeric(
+    df1['Partner_Count'],
+    errors='coerce'
+)
+
+X = df1.drop(
+    ['Cost_USD_Million', 'Status'],
+    axis=1
+)
+y = df1['Cost_USD_Million']
 
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
     test_size=0.2,
-    random_state=42,
-    stratify=y
+    random_state=42
 )
 
 cat_features = [
@@ -56,40 +70,34 @@ cat_features = [
     'Country_Region'
 ]
 
-model = CatBoostClassifier(
+model = CatBoostRegressor(
     iterations=500,
     learning_rate=0.05,
     depth=6,
-    loss_function='Logloss',
-    eval_metric='F1',
-    class_weights=[3, 1],
+    loss_function='RMSE',
+    eval_metric='RMSE',
     verbose=100
 )
 
 model.fit(
     X_train,
     y_train,
-    cat_features=cat_features
+    cat_features=cat_features,
+    eval_set=(X_test, y_test)
 )
-
-# feature_columns = list(X.columns)
-# import json
-
-# with open("D:/Data Analysis/Space Mission Analysis/backend/model/feature.json", "w") as f:
-#     json.dump(feature_columns, f)
-
-feature_importance = pd.DataFrame({
-    'Feature': X.columns,
-    'Importance': model.feature_importances_
-}).sort_values('Importance', ascending=False)
-
-print(feature_importance)
-
-from sklearn.metrics import accuracy_score, classification_report
 
 y_pred = model.predict(X_test)
 
-print("Accuracy: ", accuracy_score(y_test,y_pred))
-print(classification_report(y_test, y_pred))
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_squared_error,
+    r2_score
+)
 
-model.save_model("mission_success_model.cbm")
+mae = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+r2 = r2_score(y_test, y_pred)
+
+print(f"MAE : {mae:.2f}")
+print(f"RMSE: {rmse:.2f}")
+print(f"R²  : {r2:.4f}")
