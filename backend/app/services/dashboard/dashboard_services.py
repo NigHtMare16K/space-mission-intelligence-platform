@@ -110,6 +110,10 @@ def yearly_trend():
         "missions": yearly.values.tolist()
     }
 
+def country_list():
+    return sorted(df['Country_Region'].unique().tolist())
+
+
 def country_stats(country):
 
     df2 = df[df['Country_Region'] == country]
@@ -207,3 +211,28 @@ def status_distribution():
         "status": status.index.tolist(),
         "count": status.values.tolist()
     }
+
+def country_map_data():
+
+    countries = (
+        df.groupby("Country_Region")
+        .agg(
+            missions=("Country_Region", "count"),
+            successes=(
+                "Status",
+                lambda x: (x == "Success").sum()
+            )
+        )
+    )
+
+    countries["success_rate"] = (
+        countries["successes"]
+        / countries["missions"]
+    ) * 100
+
+    return (
+        countries
+        .reset_index()
+        .round(2)
+        .to_dict(orient="records")
+    )

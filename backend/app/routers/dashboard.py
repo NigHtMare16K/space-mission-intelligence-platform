@@ -5,7 +5,10 @@ from app.services.dashboard.dashboard_services import (
     status_distribution,
     mission_category,
     country_stats,
-    agency_analysis
+    agency_analysis,
+    yearly_trend,
+    country_list,
+    country_map_data,
 )
 
 router = APIRouter(
@@ -41,3 +44,15 @@ def get_mission_category():
 @router.get("/country-stats")
 def get_country_stats(country: str):
     return country_stats(country)
+
+@router.get("/country/{country}")
+def get_country_by_path(country: str):
+    return country_stats(country)
+
+@router.get("/countries")
+def get_countries():
+    return country_list()
+
+@router.get("/country-map")
+def get_country_map():
+    return country_map_data()

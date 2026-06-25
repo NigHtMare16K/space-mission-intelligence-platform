@@ -9,7 +9,7 @@ from app.services.prediction.success_servive import(
 )
 
 router = APIRouter(
-    prefix="/Mission Success Prediction",
+    prefix="/prediction",
     tags=['Prediction Model']
 )
 
