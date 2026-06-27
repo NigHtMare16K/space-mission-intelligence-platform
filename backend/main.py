@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import dashboard,prediction
+from app.routers import dashboard,prediction,mission_comparison
 
 app = FastAPI()
 
@@ -14,7 +14,8 @@ app.add_middleware(
 
 app.include_router(dashboard.router)
 app.include_router(prediction.router)
+app.include_router(mission_comparison.router)
 
 @app.get('/')
 def get_view():
-    return "Hello"
+    return "Space Mission Exploration"
