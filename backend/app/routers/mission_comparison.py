@@ -1,11 +1,11 @@
 from fastapi import APIRouter
 
-from services.comparison.mission_comp import (
+from app.services.comparison.mission_comp import (
     MissionComp,
     llm_comp
 )
 
-from schemas.comparison import MissionRequest
+from app.schemas.comparison import MissionRequest
 
 router = APIRouter(
     prefix = "/mission-comparison",

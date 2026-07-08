@@ -66,13 +66,6 @@ export const CHART_COLORS = [
   '#ec4899',
 ]
 
-export interface CountryMapRecord {
-  Country_Region: string
-  missions: number
-  successes: number
-  success_rate: number
-}
-
 export interface PredictionRequest {
   Agency: string
   Agency_Type: number

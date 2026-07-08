@@ -91,7 +91,7 @@ export function CountryExplorer({ countries }: CountryExplorerProps) {
       {!selected && (
         <EmptyState
           title="No country selected"
-          description="Choose a country from the dropdown or click a region on the dashboard map."
+          description="Choose a country from the dropdown to view statistics and charts."
         />
       )}
 

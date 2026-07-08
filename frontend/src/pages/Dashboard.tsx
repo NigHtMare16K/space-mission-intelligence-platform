@@ -17,9 +17,7 @@ import { YearlyTrendChart } from '@/charts/YearlyTrendChart'
 import { StatusDonutChart } from '@/charts/StatusDonutChart'
 import { MissionCategoryChart } from '@/charts/MissionCategoryChart'
 import { AgencyTable } from '@/charts/AgencyTable'
-import { WorldMapChart } from '@/charts/WorldMapChart'
 import { useDashboard } from '@/hooks/useDashboard'
-import { useCountryMap } from '@/hooks/useCountryMap'
 
 export function Dashboard() {
   const {
@@ -32,13 +30,6 @@ export function Dashboard() {
     error,
     refetch,
   } = useDashboard()
-
-  const {
-    data: mapData,
-    loading: mapLoading,
-    error: mapError,
-    refetch: refetchMap,
-  } = useCountryMap()
 
   if (error && !overview) {
     return (
@@ -64,20 +55,8 @@ export function Dashboard() {
         ) : overview ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <KPICard label="Total Missions" value={overview.total_missions} icon={Rocket} index={0} />
-            <KPICard
-              label="Success Rate"
-              value={overview.success_percentage.toFixed(1)}
-              icon={TrendingUp}
-              index={1}
-              suffix="%"
-            />
-            <KPICard
-              label="Average Cost"
-              value={`$${overview.avg_cost}`}
-              icon={DollarSign}
-              index={2}
-              suffix="M"
-            />
+            <KPICard label="Success Rate" value={overview.success_percentage.toFixed(1)} icon={TrendingUp} index={1} suffix="%" />
+            <KPICard label="Average Cost" value={`$${overview.avg_cost}`} icon={DollarSign} index={2} suffix="M" />
             <KPICard label="Countries" value={overview.total_countries} icon={Globe} index={3} />
             <KPICard label="Launch Vehicles" value={overview.launch_vehicles} icon={Satellite} index={4} />
             <KPICard label="Upcoming" value={overview.upcoming_missions} icon={Calendar} index={5} />
@@ -89,11 +68,7 @@ export function Dashboard() {
 
       <section className="mb-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {loading ? (
-            <SuccessGaugeSkeleton />
-          ) : overview ? (
-            <SuccessGauge percentage={overview.success_percentage} />
-          ) : null}
+          {loading ? <SuccessGaugeSkeleton /> : overview ? <SuccessGauge percentage={overview.success_percentage} /> : null}
           <div className="lg:col-span-2">
             <YearlyTrendChart data={yearlyTrend} loading={loading} />
           </div>
@@ -109,16 +84,6 @@ export function Dashboard() {
 
       <section className="mb-12">
         <AgencyTable data={agencies} loading={loading} />
-      </section>
-
-      <section className="mb-12">
-        <h2 className="section-title">World Map</h2>
-        <WorldMapChart
-          data={mapData}
-          loading={mapLoading}
-          error={mapError}
-          onRetry={refetchMap}
-        />
       </section>
     </div>
   )

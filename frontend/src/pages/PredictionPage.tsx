@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BrainCircuit, CheckCircle2, XCircle } from 'lucide-react'
+import { BrainCircuit, CheckCircle2, XCircle, Rocket, MapPin, Settings2 } from 'lucide-react'
+import { PageHeader } from '@/components/layout/PageHeader'
+import { ProgressBar } from '@/components/shared/ProgressBar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FormField, FormInput, FormSelect } from '@/components/ui/form-field'
@@ -23,6 +25,26 @@ const defaultForm: PredictionRequest = {
   Cost_USD_Million: 500,
   Launch_Year: 2026,
   Country_Region: 'USA',
+}
+
+function FormSection({
+  title,
+  icon: Icon,
+  children,
+}: {
+  title: string
+  icon: React.ComponentType<{ className?: string }>
+  children: React.ReactNode
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 text-sm font-medium text-purple-300 border-b border-purple-500/20 pb-2">
+        <Icon className="h-4 w-4" />
+        {title}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
+    </div>
+  )
 }
 
 export function PredictionPage() {
@@ -52,17 +74,11 @@ export function PredictionPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 pb-16 max-w-5xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <BrainCircuit className="h-8 w-8 text-purple-400" />
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-100">
-            Mission Success Prediction
-          </h1>
-        </div>
-        <p className="text-slate-400">
-          Predict mission outcome using the trained CatBoost model.
-        </p>
-      </div>
+      <PageHeader
+        icon={BrainCircuit}
+        title="Mission Success Prediction"
+        description="Predict mission outcome using the trained CatBoost model."
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass-card-hover">
@@ -70,97 +86,51 @@ export function PredictionPage() {
             <CardTitle>Mission Parameters</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <FormSection title="Agency & Program" icon={Settings2}>
                 <FormField label="Agency">
-                  <FormSelect
-                    value={form.Agency}
-                    onChange={(v) => update('Agency', v)}
-                    options={PREDICTION_FORM_OPTIONS.agencies}
-                  />
+                  <FormSelect value={form.Agency} onChange={(v) => update('Agency', v)} options={PREDICTION_FORM_OPTIONS.agencies} />
                 </FormField>
                 <FormField label="Agency Type">
-                  <FormSelect
-                    value={form.Agency_Type}
-                    onChange={(v) => update('Agency_Type', Number(v))}
-                    options={PREDICTION_FORM_OPTIONS.agencyTypes}
-                  />
+                  <FormSelect value={form.Agency_Type} onChange={(v) => update('Agency_Type', Number(v))} options={PREDICTION_FORM_OPTIONS.agencyTypes} />
                 </FormField>
                 <FormField label="Program Type">
-                  <FormSelect
-                    value={form.Program_Type}
-                    onChange={(v) => update('Program_Type', v)}
-                    options={PREDICTION_FORM_OPTIONS.programTypes}
-                  />
-                </FormField>
-                <FormField label="Mission Category">
-                  <FormSelect
-                    value={form.Mission_Category}
-                    onChange={(v) => update('Mission_Category', v)}
-                    options={PREDICTION_FORM_OPTIONS.missionCategories}
-                  />
-                </FormField>
-                <FormField label="Sub Category" className="sm:col-span-2">
-                  <FormSelect
-                    value={form.Sub_Category}
-                    onChange={(v) => update('Sub_Category', v)}
-                    options={PREDICTION_FORM_OPTIONS.subCategories}
-                  />
-                </FormField>
-                <FormField label="Launch Vehicle">
-                  <FormSelect
-                    value={form.Launch_Vehicle}
-                    onChange={(v) => update('Launch_Vehicle', v)}
-                    options={PREDICTION_FORM_OPTIONS.launchVehicles}
-                  />
-                </FormField>
-                <FormField label="Launch Site">
-                  <FormSelect
-                    value={form.Launch_Site}
-                    onChange={(v) => update('Launch_Site', v)}
-                    options={PREDICTION_FORM_OPTIONS.launchSites}
-                  />
-                </FormField>
-                <FormField label="Crew Type">
-                  <FormSelect
-                    value={form.Crew_Type}
-                    onChange={(v) => update('Crew_Type', v)}
-                    options={PREDICTION_FORM_OPTIONS.crewTypes}
-                  />
-                </FormField>
-                <FormField label="Destination">
-                  <FormSelect
-                    value={form.Destination}
-                    onChange={(v) => update('Destination', v)}
-                    options={PREDICTION_FORM_OPTIONS.destinations}
-                  />
-                </FormField>
-                <FormField label="Cost (USD Million)">
-                  <FormInput
-                    type="number"
-                    value={form.Cost_USD_Million}
-                    onChange={(v) => update('Cost_USD_Million', Number(v))}
-                    min={0}
-                    step={0.1}
-                  />
-                </FormField>
-                <FormField label="Launch Year">
-                  <FormInput
-                    type="number"
-                    value={form.Launch_Year}
-                    onChange={(v) => update('Launch_Year', Number(v))}
-                    min={1950}
-                    max={2100}
-                  />
+                  <FormSelect value={form.Program_Type} onChange={(v) => update('Program_Type', v)} options={PREDICTION_FORM_OPTIONS.programTypes} />
                 </FormField>
                 <FormField label="Country">
-                  <FormSelect
-                    value={form.Country_Region}
-                    onChange={(v) => update('Country_Region', v)}
-                    options={PREDICTION_FORM_OPTIONS.countries}
-                  />
+                  <FormSelect value={form.Country_Region} onChange={(v) => update('Country_Region', v)} options={PREDICTION_FORM_OPTIONS.countries} />
                 </FormField>
-              </div>
+              </FormSection>
+
+              <FormSection title="Mission Details" icon={Rocket}>
+                <FormField label="Mission Category">
+                  <FormSelect value={form.Mission_Category} onChange={(v) => update('Mission_Category', v)} options={PREDICTION_FORM_OPTIONS.missionCategories} />
+                </FormField>
+                <FormField label="Sub Category" className="sm:col-span-2">
+                  <FormSelect value={form.Sub_Category} onChange={(v) => update('Sub_Category', v)} options={PREDICTION_FORM_OPTIONS.subCategories} />
+                </FormField>
+                <FormField label="Crew Type">
+                  <FormSelect value={form.Crew_Type} onChange={(v) => update('Crew_Type', v)} options={PREDICTION_FORM_OPTIONS.crewTypes} />
+                </FormField>
+                <FormField label="Destination">
+                  <FormSelect value={form.Destination} onChange={(v) => update('Destination', v)} options={PREDICTION_FORM_OPTIONS.destinations} />
+                </FormField>
+              </FormSection>
+
+              <FormSection title="Launch & Budget" icon={MapPin}>
+                <FormField label="Launch Vehicle">
+                  <FormSelect value={form.Launch_Vehicle} onChange={(v) => update('Launch_Vehicle', v)} options={PREDICTION_FORM_OPTIONS.launchVehicles} />
+                </FormField>
+                <FormField label="Launch Site">
+                  <FormSelect value={form.Launch_Site} onChange={(v) => update('Launch_Site', v)} options={PREDICTION_FORM_OPTIONS.launchSites} />
+                </FormField>
+                <FormField label="Cost (USD Million)">
+                  <FormInput type="number" value={form.Cost_USD_Million} onChange={(v) => update('Cost_USD_Million', Number(v))} min={0} step={0.1} />
+                </FormField>
+                <FormField label="Launch Year">
+                  <FormInput type="number" value={form.Launch_Year} onChange={(v) => update('Launch_Year', Number(v))} min={1950} max={2100} />
+                </FormField>
+              </FormSection>
 
               <Button type="submit" disabled={loading} className="w-full sm:w-auto">
                 {loading ? 'Predicting...' : 'Predict Success'}
@@ -204,12 +174,8 @@ export function PredictionPage() {
                         <XCircle className="h-12 w-12 text-red-400" />
                       )}
                       <div>
-                        <p className="text-sm text-slate-400">Prediction</p>
-                        <p
-                          className={`text-2xl font-bold ${
-                            result.prediction === 'Success' ? 'text-green-400' : 'text-red-400'
-                          }`}
-                        >
+                        <p className="text-sm text-slate-400">Predicted Outcome</p>
+                        <p className={`text-2xl font-bold ${result.prediction === 'Success' ? 'text-green-400' : 'text-red-400'}`}>
                           {result.prediction}
                         </p>
                       </div>
@@ -224,19 +190,11 @@ export function PredictionPage() {
                     <CardTitle className="text-base">Success Probability</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-4 rounded-full bg-purple-500/20 overflow-hidden">
-                      <motion.div
-                        className={`h-full rounded-full ${
-                          result.success_probability >= 50 ? 'bg-green-500' : 'bg-red-500'
-                        }`}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${result.success_probability}%` }}
-                        transition={{ duration: 0.8, ease: 'easeOut' }}
-                      />
-                    </div>
-                    <p className="mt-2 text-sm text-slate-400 text-right">
-                      {result.success_probability.toFixed(2)}% probability of success
-                    </p>
+                    <ProgressBar
+                      value={result.success_probability}
+                      colorClass={result.success_probability >= 50 ? 'bg-green-500' : 'bg-red-500'}
+                      label={`${result.success_probability.toFixed(2)}% probability of success`}
+                    />
                   </CardContent>
                 </Card>
               </motion.div>

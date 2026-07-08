@@ -1,7 +1,8 @@
-import { Globe } from 'lucide-react'
+import { BarChart3 } from 'lucide-react'
 import { CountryExplorer } from '@/components/CountryExplorer'
+import { PageHeader } from '@/components/layout/PageHeader'
 import { ErrorState } from '@/components/StateMessages'
-import { Skeleton } from '@/components/ui/skeleton'
+import { LoadingState } from '@/components/shared/LoadingState'
 import { useCountries } from '@/hooks/useCountries'
 
 export function CountryExplorerPage() {
@@ -9,21 +10,14 @@ export function CountryExplorerPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 pb-16 max-w-7xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <Globe className="h-8 w-8 text-purple-400" />
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-100">Country Explorer</h1>
-        </div>
-        <p className="text-slate-400">
-          Deep-dive into mission statistics by country or region.
-        </p>
-      </div>
+      <PageHeader
+        icon={BarChart3}
+        title="Country Statistics"
+        description="Explore mission statistics, charts, and regional insights by country or region."
+      />
 
       {loading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-[300px] w-full rounded-xl" />
-        </div>
+        <LoadingState variant="skeleton" rows={4} />
       ) : error ? (
         <ErrorState message={error} onRetry={refetch} />
       ) : (
